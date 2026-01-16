@@ -136,7 +136,7 @@ export default function SignupForm() {
                 formDataToSend.append('verificationDoc', studentDocument);
             }
             // Call Registration API
-            const API_URL = process.env.NEXT_PUBLIC_API_URL;
+            const API_URL = (process.env.NEXT_PUBLIC_API_URL || '').replace(/\/$/, '');
             const response = await fetch(`${API_URL}/auth/register`, {
                 method: 'POST',
                 body: formDataToSend,

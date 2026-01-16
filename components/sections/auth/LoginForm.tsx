@@ -32,7 +32,7 @@ export default function LoginForm() {
             }
 
             // Real API Call
-            const API_URL = process.env.NEXT_PUBLIC_API_URL;
+            const API_URL = (process.env.NEXT_PUBLIC_API_URL || '').replace(/\/$/, '');
             const response = await fetch(`${API_URL}/auth/login`, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
