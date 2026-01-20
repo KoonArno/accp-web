@@ -123,3 +123,39 @@
   font-size: 13px !important;
   white-space: nowrap !important;
 }
+
+/* Mobile Header Logo Fix */
+@media (max-width: 991px) {
+    .mobile-header-elements .mobile-logo {
+        display: flex !important;
+        align-items: center !important;
+        justify-content: flex-start !important;
+    }
+    .mobile-header-elements .mobile-logo img {
+        height: 50px !important;
+        width: auto !important;
+        max-width: 200px !important;
+    }
+}
+
+/* Mobile Sidebar Drawer Fixes */
+.mobile-sidebar {
+    z-index: 99999 !important; /* Ensure atop sticky elements like gallery tabs */
+    background: #fff !important;
+}
+
+/* Fix Logo Inside Mobile Drawer */
+.mobile-sidebar .logosicon-area .logos img {
+    height: auto !important;
+    max-height: 80px !important; /* Override inline styles to fix sizing issues */
+    width: auto !important;
+    max-width: 180px !important;
+    object-fit: contain !important;
+}
+
+/* Ensure sidebar content doesn't overlap weirdly */
+.mobile-sidebar .mobile-nav {
+    position: relative;
+    z-index: 2;
+    background: #fff;
+}
