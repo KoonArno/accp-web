@@ -218,7 +218,7 @@ export default function Header1({ scroll, isMobileMenu, handleMobileMenu, isSear
                                         </ul>
                                     </div>
 
-                                    <div className="btn-area" style={{ display: 'flex', alignItems: 'center', gap: '10px', marginRight: '15px' }}>
+                                    <div className="btn-area" style={{ display: 'flex', alignItems: 'center', gap: '15px', marginRight: '0' }}>
                                         {/* Language Switcher */}
                                         <div className="d-none d-xxl-flex" style={{ alignItems: 'center' }}>
                                             <div style={{
@@ -332,7 +332,7 @@ export default function Header1({ scroll, isMobileMenu, handleMobileMenu, isSear
                         <div className="mobile-header-elements">
                             <div className="mobile-logo">
                                 <Link href={`/${locale}`}>
-                                    <img src="/assets/img/logo/accp_logo_main.png" alt="ACCP 2026" style={{ height: '60px', width: 'auto' }} />
+                                    <img src="/assets/img/logo/ACCP-2026-Logo-White.png" alt="ACCP 2026" style={{ height: '60px', width: 'auto' }} />
                                 </Link>
                             </div>
                             <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
