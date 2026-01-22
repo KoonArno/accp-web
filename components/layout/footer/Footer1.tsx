@@ -59,23 +59,25 @@ export default function Footer1() {
 							</div>
 						</div>
 
-						{/* Event Gallery */}
+						{/* Venue & Contact Address */}
 						<div className="col-lg-4 col-md-6">
-							<div className="footer-social-box">
-								<h3>{t('common.gallery')}</h3>
-								<div className="space12" />
-								<div className="row">
-									{[1, 2, 3, 4, 5, 6].map((num) => (
-										<div key={num} className="col-lg-4 col-md-4 col-4">
-											<div className="img1">
-												<img src={`/assets/img/all-images/footer/footer-img${num}.png`} alt="" />
-												<div className="icons">
-													<Link href={`/${locale}/gallery`}><i className="fa-brands fa-instagram" /></Link>
-												</div>
-											</div>
-										</div>
-									))}
-								</div>
+							<div className="link-content2">
+								<h3>{t('common.venue')}</h3>
+								<ul style={{ listStyle: 'none', padding: 0, margin: 20 }}>
+									<li style={{ marginBottom: '16px', display: 'flex', alignItems: 'flex-start' }}>
+										<i className="fa-solid fa-location-dot" style={{ width: '20px', marginRight: '10px', color: '#EA4335', marginTop: '4px' }} />
+										<span>{t('footer.venueAddress')}</span>
+									</li>
+								</ul>
+								<div className="space16" />
+								<h3>{t('common.contactAddress')}</h3>
+								<ul style={{ listStyle: 'none', padding: 0, margin: 20 }}>
+									<li style={{ marginBottom: '12px', display: 'flex', alignItems: 'flex-start' }}>
+										<i className="fa-solid fa-building" style={{ width: '20px', marginRight: '10px', color: '#4285F4', marginTop: '4px' }} />
+										<span style={{ whiteSpace: 'pre-line' }}>{t('footer.contactAddressDetail')}</span>
+									</li>
+									
+								</ul>
 							</div>
 						</div>
 					</div>

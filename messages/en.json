@@ -49,7 +49,9 @@
     "faq": "FAQ",
     "speakers": "Speakers",
     "loading": "Loading...",
-    "backToHome": "Back to Home"
+    "backToHome": "Back to Home",
+    "venue": "Venue",
+    "contactAddress": "Contact Address"
   },
   "hero": {
     "subtitle": "The 25th Asian Conference on Clinical Pharmacy",
@@ -453,7 +455,10 @@
   },
   "footer": {
     "description": "The 25th Asian Conference on Clinical Pharmacy - Borderless Pharmacy Practice",
-    "venue": "Centara Grand, CentralWorld"
+    "venue": "Centara Grand, CentralWorld",
+    "venueAddress": "999/9 Rama 1 Road, Pathumwan, Bangkok 10330, Thailand",
+    "contactAddressDetail": "88/19 Mahidol Bldg., 8th Floor, Ministry of Public Health, Tiwanon Rd., Mueang Nonthaburi, Nonthaburi 11000 \n Tel. 0-2591-9992 Fax 0-2591-9996",
+    "phone": "02 591 9992"
   },
   "map": {
     "subtitle": "Conference Venue",
