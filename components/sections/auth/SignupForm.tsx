@@ -11,6 +11,8 @@ import { Hourglass } from 'react-loader-spinner';
 import toast from 'react-hot-toast';
 import '@/styles/signup-form.css';
 import { logger } from '@/utils/logger';
+import { CountrySelect } from 'react-country-state-city';
+import 'react-country-state-city/dist/react-country-state-city.css';
 
 type TabType = 'thaiStudent' | 'internationalStudent' | 'thaiProfessional' | 'internationalProfessional';
 
@@ -498,13 +500,9 @@ export default function SignupForm() {
                                     <label style={{ display: 'block', fontSize: '14px', fontWeight: '500', color: '#333', marginBottom: '6px' }}>
                                         {locale === 'th' ? 'ประเทศ' : 'Country'} <span style={{ color: '#e53935' }}>*</span>
                                     </label>
-                                    <input
-                                        type="text"
-                                        value={country}
-                                        onChange={(e) => setCountry(e.target.value)}
-                                        placeholder={locale === 'th' ? 'กรอกชื่อประเทศ' : 'Enter country name'}
-                                        required
-                                        style={inputStyle}
+                                    <CountrySelect
+                                        onChange={(e: { name: string }) => setCountry(e.name || '')}
+                                        placeHolder={locale === 'th' ? 'เลือกประเทศ' : 'Select Country'}
                                     />
                                 </div>
                             </>
