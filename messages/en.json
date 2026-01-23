@@ -232,12 +232,12 @@
     "distinguishedSpeakers": "Distinguished Speakers"
   },
   "symposia": {
-    "pageTitle": "Symposia",
+    "pageTitle": "Symposium",
     "description": "Specialized sessions on key topics",
-    "topics": "Symposia Topics",
-    "scientificSymposiaTitle": "Scientific Symposia by Track",
-    "scientificSymposiaDesc": "Dive deep into specialized topics with our parallel symposia sessions. Each track focuses on specific areas of clinical pharmacy and pharmaceutical sciences.",
-    "note": "Symposia sessions run in parallel. Please plan your schedule in advance to attend the sessions most relevant to your interests."
+    "topics": "Symposium Topics",
+    "scientificSymposiaTitle": "Scientific Symposium by Track",
+    "scientificSymposiaDesc": "Dive deep into specialized topics with our parallel Symposium sessions. Each track focuses on specific areas of clinical pharmacy and pharmaceutical sciences.",
+    "note": "Symposium sessions run in parallel. Please plan your schedule in advance to attend the sessions most relevant to your interests."
   },
   "oralPoster": {
     "pageTitle": "Oral & Poster Presentations",
