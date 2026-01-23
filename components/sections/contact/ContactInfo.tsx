@@ -88,7 +88,7 @@ export default function ContactInfo() {
                             </div>
                             <div className="text" style={{ paddingLeft: 0 }}>
                                 <h5 style={{ fontSize: '20px', fontWeight: '700', marginBottom: '8px', color: '#1a1a2e', textTransform: 'none' }}>{t('location')}</h5>
-                                <Link href="https://maps.google.com/?q=โรงแรมเซ็นทารา แกรนด์ แอท เซ็นทรัลเวิลด์" target="_blank" style={{ fontSize: '16px', color: '#4a4a4a', fontWeight: '500' }}>Centara Grand at CentralWorld Hote</Link>
+                                <Link href="https://maps.app.goo.gl/MeDVqAgvFQ2Q3XCz8" target="_blank" style={{ fontSize: '16px', color: '#4a4a4a', fontWeight: '500' }}>Centara Grand & Bangkok Convention Centre at CentralWorld Hotel</Link>
                             </div>
                         </div>
                     </div>
