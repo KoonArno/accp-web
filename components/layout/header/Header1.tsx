@@ -73,7 +73,9 @@ export default function Header1({ scroll, isMobileMenu, handleMobileMenu, isSear
     };
 
     // Check if current page should always show colored logo
-    const pathWithoutLocale = getPathWithoutLocale();
+    // Check if current page should always show colored logo
+    const segments = pathname.split('/');
+    const pathWithoutLocale = '/' + segments.slice(2).join('/') || '/';
     const shouldShowColoredLogo = pathWithoutLocale === '/my-tickets' || pathWithoutLocale === '/abstract-status';
 
     // Calculate IsHeaderWhite based on scroll or headerBgWhite prop
