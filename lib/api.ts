@@ -162,6 +162,14 @@ export const api = {
                     capacity: number;
                     enrolled: number;
                     fee: string;
+                    tickets: {
+                        id: number;
+                        name: string;
+                        price: string;
+                        currency: string;
+                        allowedRoles: string[] | null;
+                        saleStartDate: string | null;
+                    }[];
                     instructors: { name: string; affiliation?: string }[];
                     color: string;
                     icon: string;
