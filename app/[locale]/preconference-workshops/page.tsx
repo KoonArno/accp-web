@@ -3,7 +3,17 @@ import Layout from "@/components/layout/Layout"
 import Link from "next/link"
 import { useTranslations, useLocale } from 'next-intl';
 import { useEffect, useState } from 'react';
+import { useAuth } from '@/context/AuthContext';
 import { api } from '@/lib/api';
+
+interface WorkshopTicket {
+    id: number;
+    name: string;
+    price: string;
+    currency: string;
+    allowedRoles: string[] | null;
+    saleStartDate: string | null;
+}
 
 interface Workshop {
     id: string;
@@ -17,7 +27,8 @@ interface Workshop {
     venue: string;
     capacity: number;
     enrolled: number;
-    fee: string;
+    fee: string; // Deprecated, use tickets logic
+    tickets: WorkshopTicket[];
     instructors: { name: string; affiliation?: string }[];
     color: string;
     icon: string;
@@ -31,6 +42,7 @@ export default function PreconferenceWorkshops() {
     const t = useTranslations('workshops');
     const tContact = useTranslations('contact');
     const locale = useLocale();
+    const { user, isAuthenticated } = useAuth();
 
     const [workshops, setWorkshops] = useState<Workshop[]>([]);
     const [isLoading, setIsLoading] = useState(true);
@@ -164,11 +176,131 @@ export default function PreconferenceWorkshops() {
                                             durationHours = hours > 0 ? `${hours}h${mins > 0 ? ` ${mins}m` : ''}` : `${mins}m`;
                                         }
 
-                                        // Check availability
+                                        // Determine Price & Availability based on User Role (Frontend Logic)
+                                        let selectedTicket: WorkshopTicket | null = null;
+                                        let guestDisplayFee = '';
+                                        let guestSaleStart: Date | null = null;
                                         const now = new Date();
-                                        const saleStart = workshop.saleStartDate ? new Date(workshop.saleStartDate) : null;
-                                        const isAvailable = saleStart ? now >= saleStart : true;
-                                        const formattedSaleDate = saleStart ? saleStart.toLocaleDateString('en-GB', {
+
+                                        if (workshop.tickets && workshop.tickets.length > 0) {
+                                            if (isAuthenticated && user) {
+                                                // LOGGED IN: Specific Role Logic
+                                                // 1. Filter candidates based on role/currency
+                                                let candidateTickets = [];
+                                                if (user.isThai) {
+                                                    candidateTickets = workshop.tickets.filter(t => t.currency === 'THB');
+                                                } else {
+                                                    candidateTickets = workshop.tickets.filter(t => t.currency !== 'THB');
+                                                }
+                                                // Fallback
+                                                if (candidateTickets.length === 0) candidateTickets = workshop.tickets;
+
+                                                // 2. Separate into Available vs Future
+                                                const availableCandidates = candidateTickets.filter(t => {
+                                                    const start = t.saleStartDate ? new Date(t.saleStartDate) : null;
+                                                    return !start || now >= start;
+                                                });
+
+                                                if (availableCandidates.length > 0) {
+                                                    availableCandidates.sort((a, b) => parseFloat(a.price) - parseFloat(b.price));
+                                                    selectedTicket = availableCandidates[0];
+                                                } else {
+                                                    candidateTickets.sort((a, b) => {
+                                                        const dateA = a.saleStartDate ? new Date(a.saleStartDate).getTime() : 0;
+                                                        const dateB = b.saleStartDate ? new Date(b.saleStartDate).getTime() : 0;
+                                                        return dateA - dateB;
+                                                    });
+                                                    selectedTicket = candidateTickets[0];
+                                                }
+                                            } else {
+                                                // GUEST: Show Both Types logic
+                                                // Find best THB option
+                                                const thbTickets = workshop.tickets.filter(t => t.currency === 'THB');
+                                                const usdTickets = workshop.tickets.filter(t => t.currency !== 'THB'); // Assuming non-THB is USD/Intl
+
+                                                // Helper to pick best ticket from a list
+                                                const pickBest = (tickets: WorkshopTicket[]) => {
+                                                    if (tickets.length === 0) return null;
+                                                    const available = tickets.filter(t => {
+                                                        const start = t.saleStartDate ? new Date(t.saleStartDate) : null;
+                                                        return !start || now >= start;
+                                                    });
+                                                    if (available.length > 0) {
+                                                        available.sort((a, b) => parseFloat(a.price) - parseFloat(b.price));
+                                                        return available[0];
+                                                    }
+                                                    // None available, pick soonest
+                                                    tickets.sort((a, b) => {
+                                                        const dateA = a.saleStartDate ? new Date(a.saleStartDate).getTime() : 0;
+                                                        const dateB = b.saleStartDate ? new Date(b.saleStartDate).getTime() : 0;
+                                                        return dateA - dateB;
+                                                    });
+                                                    return tickets[0];
+                                                };
+
+                                                const bestTHB = pickBest(thbTickets);
+                                                const bestUSD = pickBest(usdTickets);
+
+                                                // Build Display String
+                                                const parts = [];
+                                                if (bestTHB) parts.push(`${bestTHB.currency} ${parseFloat(bestTHB.price).toLocaleString()}`);
+                                                if (bestUSD) parts.push(`${bestUSD.currency} ${parseFloat(bestUSD.price).toLocaleString()}`);
+                                                guestDisplayFee = parts.join(' / ');
+
+                                                // Determine Availability (Earliest valid date logic)
+                                                // If either is available NOW, then it's available.
+                                                // If both are future, take the EARLIEST future date.
+
+                                                const dateTHB = bestTHB?.saleStartDate ? new Date(bestTHB.saleStartDate) : null;
+                                                const dateUSD = bestUSD?.saleStartDate ? new Date(bestUSD.saleStartDate) : null;
+
+                                                const isTHBReady = !dateTHB || now >= dateTHB;
+                                                const isUSDReady = !dateUSD || now >= dateUSD;
+
+                                                if ((bestTHB && isTHBReady) || (bestUSD && isUSDReady)) {
+                                                    // At least one is ready -> Available Now
+                                                    guestSaleStart = null; // null implies "now" in our logic usually, or we ensure check passes
+                                                } else {
+                                                    // Both are future (or one future, one missing). Pick earliest future.
+                                                    const validDates = [dateTHB, dateUSD].filter(d => d !== null) as Date[];
+                                                    if (validDates.length > 0) {
+                                                        validDates.sort((a, b) => a.getTime() - b.getTime());
+                                                        guestSaleStart = validDates[0];
+                                                    }
+                                                }
+                                            }
+                                        }
+
+                                        // Finalize values for Render
+                                        let finalDisplayFee = workshop.fee || 'Free';
+                                        let finalSaleStart: Date | null = null;
+
+                                        if (isAuthenticated && user) {
+                                            // Authenticated
+                                            if (selectedTicket) {
+                                                finalDisplayFee = `${selectedTicket.currency} ${parseFloat(selectedTicket.price).toLocaleString()}`;
+                                                finalSaleStart = selectedTicket.saleStartDate ? new Date(selectedTicket.saleStartDate) : null;
+                                            }
+                                        } else {
+                                            // Guest
+                                            if (guestDisplayFee) finalDisplayFee = guestDisplayFee;
+                                            finalSaleStart = guestSaleStart;
+                                        }
+
+                                        // Fallback to workshop global date if ticket date is missing/undefined but we need a restriction
+                                        // (Logic: If we have a ticket but no specific date, we check workshop date.
+                                        // But if we already determined "Available Now" (guestSaleStart = null), we double check workshop date?
+                                        // No, simpler: if finalSaleStart is null, it means "Now".
+                                        // BUT if the workshop itself has a future date, we should respect it?
+                                        // Actually the Workshop global date IS derived from tickets in backend usually, or manually set.
+                                        // Let's be safe: If finalSaleStart is NULL (meaning ticket is open), check Workshop Date.
+
+                                        const workshopDate = workshop.saleStartDate ? new Date(workshop.saleStartDate) : null;
+                                        const effectiveSaleStart = finalSaleStart || workshopDate;
+
+                                        // Re-evaluate availability based on Effective Date
+                                        const isAvailable = effectiveSaleStart ? now >= effectiveSaleStart : true;
+                                        const formattedSaleDate = effectiveSaleStart ? effectiveSaleStart.toLocaleDateString('en-GB', {
                                             day: 'numeric',
                                             month: 'long',
                                             year: 'numeric'
@@ -295,7 +427,7 @@ export default function PreconferenceWorkshops() {
                                                                     {t('fee')}
                                                                 </p>
                                                                 <p style={{ margin: 0, fontWeight: 700, fontSize: '16px', color: workshop.fee === 'Free' ? '#10B981' : workshop.color }}>
-                                                                    {workshop.fee === 'Free' ? 'Included' : workshop.fee}
+                                                                    {finalDisplayFee}
                                                                 </p>
                                                             </div>
                                                         </div>
